@@ -20,7 +20,7 @@ public class Account {
 
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GenericGenerator(name = "UUID", strategy = "com.thief.util.AccountIdGenerator")
     private String id;
 
     private String name;
