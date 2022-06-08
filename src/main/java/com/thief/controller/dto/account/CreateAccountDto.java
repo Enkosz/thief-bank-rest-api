@@ -1,4 +1,4 @@
-package com.thief.controller;
+package com.thief.controller.dto.account;
 
 import lombok.Data;
 

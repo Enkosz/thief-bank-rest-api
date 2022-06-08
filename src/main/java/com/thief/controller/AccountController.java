@@ -1,12 +1,11 @@
 package com.thief.controller;
 
+import com.thief.controller.dto.account.*;
+import com.thief.controller.mapper.AccountMapper;
 import com.thief.entity.Account;
-import com.thief.entity.Transaction;
 import com.thief.service.AccountService;
-import jdk.jfr.ContentType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,18 +20,28 @@ public class AccountController {
     public final AccountService accountService;
 
     @GetMapping
-    public List<AccountDto> getAccounts() {
+    public List<AccountCompactDto> getAccounts() {
         return accountService.getAccounts()
                 .stream()
-                .map(AccountDto::fromDomainToDto)
+                .map(AccountMapper::fromDomainToAccountCompactDto)
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/{accountId}")
+    public AccountDto getAccount(@PathVariable String accountId) {
+        return accountService.getAccountById(accountId)
+                .map(AccountMapper::fromDomainToAccountDto)
+                .orElseThrow(RuntimeException::new);
+    }
+
     @PostMapping
-    public AccountDto createAccount(@RequestBody CreateAccountDto createAccountDto) {
+    public AccountCreatedDto createAccount(@RequestBody CreateAccountDto createAccountDto) {
         Account account = accountService.createAccount(createAccountDto);
 
-        return AccountDto.fromDomainToDto(account);
+        AccountCreatedDto accountCreatedDto = new AccountCreatedDto();
+        accountCreatedDto.setId(account.getId());
+
+        return accountCreatedDto;
     }
 
     @DeleteMapping("/{accountId}")
@@ -41,33 +50,32 @@ public class AccountController {
         accountService.deleteAccount(accountId);
     }
 
-    @GetMapping("/{accountId}")
-    public Account getAccount(@PathVariable String accountId) {
-        return accountService.getAccountById(accountId)
-                .orElseThrow(RuntimeException::new);
-    }
-
-
     @PostMapping(value = "/{accountId}", consumes = "application/json")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void addDeposit(@PathVariable String accountId, @RequestBody Map<String, String> values) {
+    public AccountDepositDto addDeposit(@PathVariable String accountId, @RequestBody Map<String, String> values) {
         Double amount = Double.parseDouble(values.get("amount"));
 
-        accountService.deposit(accountId, amount);
+        return accountService.deposit(accountId, amount);
     }
 
     @PutMapping("/{accountId}")
-    public Account updateAccount(@PathVariable String accountId, @RequestAttribute String name, @RequestAttribute String surname) {
-        return accountService.updateAccount(accountId, name, surname);
+    public AccountCompactDto updateAccount(@PathVariable String accountId, @RequestAttribute String name, @RequestAttribute String surname) {
+        Account account = accountService.updateAccount(accountId, name, surname);
+
+        return AccountMapper.fromDomainToAccountCompactDto(account);
     }
 
     @PatchMapping("/{accountId}")
-    public Account patchAccount(@PathVariable String accountId, @RequestAttribute String name, @RequestAttribute String surname) {
-        return accountService.updateAccount(accountId, name, surname);
+    public AccountCompactDto patchAccount(@PathVariable String accountId, @RequestAttribute String name, @RequestAttribute String surname) {
+        Account account = accountService.updateAccount(accountId, name, surname);
+
+        return AccountMapper.fromDomainToAccountCompactDto(account);
     }
 
-    /*@RequestMapping(method = RequestMethod.HEAD, path = "/{accountId}")
-    public Account getAccountInformation(@PathVariable String accountId) {
-        return accountService.getAccountById(accountId);
-    }*/
+    @RequestMapping(method = RequestMethod.HEAD, path = "/{accountId}")
+    public AccountOwnerDto getAccountInformation(@PathVariable String accountId) {
+        Account account = accountService.getAccountById(accountId)
+                .orElseThrow(RuntimeException::new);
+
+        return AccountMapper.fromDomainToAccountOwnerDto(account);
+    }
 }

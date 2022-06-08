@@ -1,6 +1,7 @@
 package com.thief.service;
 
-import com.thief.controller.CreateAccountDto;
+import com.thief.controller.dto.account.AccountDepositDto;
+import com.thief.controller.dto.account.CreateAccountDto;
 import com.thief.entity.Account;
 
 import java.util.List;
@@ -18,5 +19,5 @@ public interface AccountService {
 
     Account deleteAccount(String accountId);
 
-    void deposit(String accountId, Double amount);
+    AccountDepositDto deposit(String accountId, Double amount);
 }
