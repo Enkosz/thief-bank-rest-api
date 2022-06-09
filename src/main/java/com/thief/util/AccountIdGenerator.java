@@ -11,7 +11,7 @@ public class AccountIdGenerator implements IdentifierGenerator {
 
     @Override
     public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
-        byte[] array = new byte[20];
+        byte[] array = new byte[10];
         Random random = new Random();
         random.nextBytes(array);
 

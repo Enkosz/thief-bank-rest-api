@@ -24,10 +24,12 @@ public class TransactionServiceImpl implements TransactionService {
     public Transaction transfer(Account fromAccount, Account toAccount, Double amount) {
         Transaction transaction = new Transaction();
 
-        if (fromAccount.getAmount() + amount < 0)
+        if (fromAccount.getAmount() - amount < 0)
             throw new InvalidTransactionException(
                     String.format("Unable to create transaction, account %s has amount less then %s",
                             fromAccount.getId(), Math.abs(amount)), InvalidTransactionException.INVALID_TRANSACTION_CODE);
+
+        fromAccount.setAmount(fromAccount.getAmount() - amount);
 
         transaction.setFrom(fromAccount);
         transaction.setTo(toAccount);

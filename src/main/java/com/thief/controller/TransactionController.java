@@ -32,12 +32,9 @@ public class TransactionController {
 
     @PostMapping("/transfer")
     public TransactionDto transfer(@RequestBody TransferDto transferDto) {
-        Account fromAccount = accountService.getAccountById(transferDto.getFromAccountId())
-                .orElseThrow(IllegalArgumentException::new);
-        Account toAccount = accountService.getAccountById(transferDto.getToAccountId())
-                .orElseThrow(IllegalArgumentException::new);
 
-        Transaction transaction = transactionService.transfer(fromAccount, toAccount, transferDto.getAmount());
+
+        Transaction transaction = accountService.transfer(transferDto);
         return TransactionMapper.fromDomainToTransactionDto(transaction);
     }
 
