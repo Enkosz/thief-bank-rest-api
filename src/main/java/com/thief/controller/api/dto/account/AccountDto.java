@@ -1,6 +1,6 @@
-package com.thief.controller.dto.account;
+package com.thief.controller.api.dto.account;
 
-import com.thief.controller.dto.transaction.TransactionCompactDto;
+import com.thief.controller.api.dto.transaction.TransactionCompactDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -1,8 +1,8 @@
-package com.thief.controller.mapper;
+package com.thief.controller.api.mapper;
 
-import com.thief.controller.dto.account.AccountCompactDto;
-import com.thief.controller.dto.account.AccountDto;
-import com.thief.controller.dto.account.AccountOwnerDto;
+import com.thief.controller.api.dto.account.AccountCompactDto;
+import com.thief.controller.api.dto.account.AccountDto;
+import com.thief.controller.api.dto.account.AccountOwnerDto;
 import com.thief.entity.Account;
 
 import java.util.stream.Collectors;

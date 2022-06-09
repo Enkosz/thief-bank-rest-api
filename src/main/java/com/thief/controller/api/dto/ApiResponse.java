@@ -1,4 +1,4 @@
-package com.thief.controller.dto;
+package com.thief.controller.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;

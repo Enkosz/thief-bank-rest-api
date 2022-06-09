@@ -1,7 +1,7 @@
-package com.thief.controller;
+package com.thief.controller.api;
 
-import com.thief.controller.dto.account.*;
-import com.thief.controller.mapper.AccountMapper;
+import com.thief.controller.api.dto.account.*;
+import com.thief.controller.api.mapper.AccountMapper;
 import com.thief.entity.Account;
 import com.thief.service.AccountService;
 import com.thief.service.account.AccountNotFoundException;

@@ -1,13 +1,14 @@
-package com.thief.controller;
+package com.thief.controller.api;
 
-import com.thief.controller.dto.transaction.TransactionCompactDto;
-import com.thief.controller.dto.transaction.TransactionDto;
-import com.thief.controller.dto.transaction.TransferDto;
-import com.thief.controller.mapper.TransactionMapper;
+import com.thief.controller.api.dto.transaction.TransactionCompactDto;
+import com.thief.controller.api.dto.transaction.TransactionDto;
+import com.thief.controller.api.dto.transaction.TransferDto;
+import com.thief.controller.api.mapper.TransactionMapper;
 import com.thief.entity.Account;
 import com.thief.entity.Transaction;
 import com.thief.service.AccountService;
 import com.thief.service.TransactionService;
+import com.thief.service.account.AccountNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,9 +33,8 @@ public class TransactionController {
 
     @PostMapping("/transfer")
     public TransactionDto transfer(@RequestBody TransferDto transferDto) {
-
-
         Transaction transaction = accountService.transfer(transferDto);
+
         return TransactionMapper.fromDomainToTransactionDto(transaction);
     }
 

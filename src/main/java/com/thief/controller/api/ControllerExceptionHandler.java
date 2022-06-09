@@ -1,6 +1,6 @@
-package com.thief.controller;
+package com.thief.controller.api;
 
-import com.thief.controller.dto.ApiResponse;
+import com.thief.controller.api.dto.ApiResponse;
 import com.thief.service.transaction.ThiefException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,7 @@
-package com.thief.controller.mapper;
+package com.thief.controller.api.mapper;
 
-import com.thief.controller.dto.transaction.TransactionCompactDto;
-import com.thief.controller.dto.transaction.TransactionDto;
+import com.thief.controller.api.dto.transaction.TransactionCompactDto;
+import com.thief.controller.api.dto.transaction.TransactionDto;
 import com.thief.entity.Transaction;
 
 public class TransactionMapper {

@@ -1,4 +1,4 @@
-package com.thief.controller.dto.account;
+package com.thief.controller.api.dto.account;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
