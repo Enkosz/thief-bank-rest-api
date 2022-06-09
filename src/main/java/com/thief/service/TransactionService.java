@@ -9,8 +9,6 @@ public interface TransactionService {
 
     List<Transaction> getTransactions();
 
-    Transaction transfer(String fromAccountId, String toAccountId, Double amount);
-
     Transaction transfer(Account fromAccount, Account toAccount, Double amount);
     
     Transaction revert(String transactionId);

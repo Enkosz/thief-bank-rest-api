@@ -20,13 +20,10 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction transfer(String fromAccountId, String toAccountId, Double amount) {
-        return null;
-    }
-
-    @Override
     public Transaction transfer(Account fromAccount, Account toAccount, Double amount) {
         Transaction transaction = new Transaction();
+
+        // TODO Aggiungere controlli saldo
 
         transaction.setFrom(fromAccount);
         transaction.setTo(toAccount);
@@ -37,6 +34,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Transaction revert(String transactionId) {
-        return null;
+        // TODO Aggiungere controlli saldo
+        Transaction targetTransaction = transactionRepository.findById(transactionId)
+                .orElseThrow(RuntimeException::new);
+
+        return transfer(targetTransaction.getTo(), targetTransaction.getFrom(), targetTransaction.getAmount());
     }
 }
