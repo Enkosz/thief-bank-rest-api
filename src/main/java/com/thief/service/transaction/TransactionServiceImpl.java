@@ -27,7 +27,7 @@ public class TransactionServiceImpl implements TransactionService {
         if (fromAccount.getAmount() + amount < 0)
             throw new InvalidTransactionException(
                     String.format("Unable to create transaction, account %s has amount less then %s",
-                            fromAccount.getId(), fromAccount.getAmount()), InvalidTransactionException.INVALID_TRANSACTION_CODE);
+                            fromAccount.getId(), Math.abs(amount)), InvalidTransactionException.INVALID_TRANSACTION_CODE);
 
         transaction.setFrom(fromAccount);
         transaction.setTo(toAccount);

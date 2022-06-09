@@ -43,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account updateAccount(String accountId, String name, String surname) {
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(AccountNotFoundException::new);
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
 
         account.setName(name);
         account.setSurname(surname);
@@ -54,7 +54,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account deleteAccount(String accountId) {
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(AccountNotFoundException::new);
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
 
         accountRepository.delete(account);
         return account;
@@ -62,7 +62,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDepositDto deposit(String accountId, Double amount) {
-        Account account = accountRepository.findById(accountId).orElseThrow(AccountNotFoundException::new);
+        Account account = accountRepository.findById(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
         Transaction transaction = transactionService.transfer(account, account, amount);
 
         account.setAmount(account.getAmount() + amount);

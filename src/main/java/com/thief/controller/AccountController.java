@@ -31,7 +31,7 @@ public class AccountController {
     public AccountDto getAccount(@PathVariable String accountId) {
         return accountService.getAccountById(accountId)
                 .map(AccountMapper::fromDomainToAccountDto)
-                .orElseThrow(AccountNotFoundException::new);
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
     }
 
     @PostMapping
@@ -75,7 +75,7 @@ public class AccountController {
     @RequestMapping(method = RequestMethod.HEAD, path = "/{accountId}")
     public AccountOwnerDto getAccountInformation(@PathVariable String accountId) {
         Account account = accountService.getAccountById(accountId)
-                .orElseThrow(AccountNotFoundException::new);
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
 
         return AccountMapper.fromDomainToAccountOwnerDto(account);
     }
