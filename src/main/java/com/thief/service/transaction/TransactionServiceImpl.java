@@ -1,5 +1,7 @@
 package com.thief.service.transaction;
 
+import com.thief.controller.api.dto.transaction.TransactionExtendDto;
+import com.thief.controller.api.mapper.TransactionMapper;
 import com.thief.entity.Account;
 import com.thief.entity.Transaction;
 import com.thief.repository.TransactionRepository;
@@ -23,15 +25,27 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Transaction transfer(Account fromAccount, Account toAccount, Double amount) {
         Transaction transaction = new Transaction();
+        transaction.setAmount(amount);
+        amount = Math.abs(amount);
 
-        if (fromAccount.getAmount() + amount < 0)
-            throw new InvalidTransactionException(
-                    String.format("Unable to create transaction, account %s has amount less then %s",
-                            fromAccount.getId(), Math.abs(amount)), InvalidTransactionException.INVALID_TRANSACTION_CODE);
+        if(fromAccount != toAccount || (fromAccount == toAccount && transaction.getAmount() < 0)){
+            if (fromAccount.getAmount() - amount < 0)
+                throw new InvalidTransactionException(
+                        String.format("Unable to create transaction, account %s has amount less then %s",
+                                fromAccount.getId(), Math.abs(amount)),
+                        InvalidTransactionException.INVALID_TRANSACTION_CODE);
+            fromAccount.setAmount(fromAccount.getAmount() - amount);
+            fromAccount.getTransactions().add(transaction);
+        }
+
+        if(fromAccount != toAccount || (fromAccount == toAccount && transaction.getAmount() > 0)) {
+            toAccount.setAmount(toAccount.getAmount() + amount);
+            //toAccount.getTransactions().add(transaction);
+            // con questa si rompe tutto :(
+        }
 
         transaction.setFrom(fromAccount);
         transaction.setTo(toAccount);
-        transaction.setAmount(amount);
 
         return transactionRepository.save(transaction);
     }

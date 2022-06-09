@@ -2,6 +2,7 @@ package com.thief.controller.api.mapper;
 
 import com.thief.controller.api.dto.transaction.TransactionCompactDto;
 import com.thief.controller.api.dto.transaction.TransactionDto;
+import com.thief.controller.api.dto.transaction.TransactionExtendDto;
 import com.thief.entity.Transaction;
 
 public class TransactionMapper {
@@ -25,5 +26,18 @@ public class TransactionMapper {
         transactionDto.setAmount(transaction.getAmount());
 
         return transactionDto;
+    }
+
+    public static TransactionExtendDto fromDomainToTransactionExtendDto(Transaction transaction) {
+        TransactionExtendDto transactionExtendDto= new TransactionExtendDto();
+
+        transactionExtendDto.setId(transaction.getId());
+        transactionExtendDto.setDate(transaction.getDate());
+        transactionExtendDto.setFromAccountId(transaction.getFrom().getId());
+        transactionExtendDto.setToAccountId(transaction.getTo().getId());
+        transactionExtendDto.setFromAccountAmount(transaction.getFrom().getAmount());
+        transactionExtendDto.setToAccountAmount(transaction.getTo().getAmount());
+
+        return transactionExtendDto;
     }
 }

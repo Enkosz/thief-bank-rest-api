@@ -1,5 +1,6 @@
 package com.thief.service;
 
+import com.thief.controller.api.dto.transaction.TransactionExtendDto;
 import com.thief.entity.Account;
 import com.thief.entity.Transaction;
 
@@ -10,6 +11,6 @@ public interface TransactionService {
     List<Transaction> getTransactions();
 
     Transaction transfer(Account fromAccount, Account toAccount, Double amount);
-    
+
     Transaction revert(String transactionId);
 }

@@ -2,6 +2,7 @@ package com.thief.controller.api;
 
 import com.thief.controller.api.dto.transaction.TransactionCompactDto;
 import com.thief.controller.api.dto.transaction.TransactionDto;
+import com.thief.controller.api.dto.transaction.TransactionExtendDto;
 import com.thief.controller.api.dto.transaction.TransferDto;
 import com.thief.controller.api.mapper.TransactionMapper;
 import com.thief.entity.Account;
@@ -32,16 +33,16 @@ public class TransactionController {
     }
 
     @PostMapping("/transfer")
-    public TransactionDto transfer(@RequestBody TransferDto transferDto) {
+    public TransactionExtendDto transfer(@RequestBody TransferDto transferDto) {
         Transaction transaction = accountService.transfer(transferDto);
 
-        return TransactionMapper.fromDomainToTransactionDto(transaction);
+        return TransactionMapper.fromDomainToTransactionExtendDto(transaction);
     }
 
     @PostMapping("/divert")
-    public TransactionDto revert(@RequestAttribute("id") String idTransaction){
+    public TransactionExtendDto revert(@RequestAttribute("id") String idTransaction){
         Transaction transaction = transactionService.revert(idTransaction);
 
-        return TransactionMapper.fromDomainToTransactionDto(transaction);
+        return TransactionMapper.fromDomainToTransactionExtendDto(transaction);
     }
 }

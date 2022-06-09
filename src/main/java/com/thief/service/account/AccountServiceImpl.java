@@ -1,5 +1,6 @@
 package com.thief.service.account;
 
+import com.thief.controller.api.dto.transaction.TransactionExtendDto;
 import com.thief.controller.api.dto.transaction.TransferDto;
 import com.thief.controller.api.dto.account.AccountDepositDto;
 import com.thief.controller.api.dto.account.CreateAccountDto;
@@ -65,9 +66,6 @@ public class AccountServiceImpl implements AccountService {
     public AccountDepositDto deposit(String accountId, Double amount) {
         Account account = accountRepository.findById(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
         Transaction transaction = transactionService.transfer(account, account, amount);
-
-        account.setAmount(account.getAmount() + amount);
-        account.getTransactions().add(transaction);
         accountRepository.save(account);
 
         return new AccountDepositDto(account.getAmount(), transaction.getId());
@@ -81,13 +79,10 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new AccountNotFoundException(transfer.getToAccountId()));
         Double amount = transfer.getAmount();
 
-        Transaction transaction = transactionService.transfer(fromAccount, toAccount, amount * -1);
-        fromAccount.setAmount(fromAccount.getAmount() - amount);
-        toAccount.setAmount(toAccount.getAmount() + amount);
-        fromAccount.getTransactions().add(transaction);
-        // da aggiungere al toAccount
+        Transaction transaction = transactionService.transfer(fromAccount, toAccount, amount);
+
         accountRepository.save(fromAccount);
         accountRepository.save(toAccount);
-        return  transaction;
+        return transaction;
     }
 }
