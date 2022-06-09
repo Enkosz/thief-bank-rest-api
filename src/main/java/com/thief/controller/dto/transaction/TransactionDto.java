@@ -9,4 +9,5 @@ public class TransactionDto extends TransactionCompactDto {
 
     private String fromAccountId;
     private String toAccountId;
+    private Double amount;
 }

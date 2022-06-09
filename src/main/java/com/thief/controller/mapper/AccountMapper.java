@@ -32,7 +32,7 @@ public class AccountMapper {
         accountDto.getTransactions()
                 .addAll(account.getTransactions()
                         .stream()
-                        .map(TransactionMapper::fromDomainToTransactionCompactDto)
+                        .map(TransactionMapper::fromDomainToTransactionDto)
                         .collect(Collectors.toList()));
 
         return accountDto;
