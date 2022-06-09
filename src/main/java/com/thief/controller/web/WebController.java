@@ -13,6 +13,6 @@ public class WebController {
 
     @RequestMapping("/transfer")
     public String transfer() {
-        return "index.html";
+        return "transfer.html";
     }
 }

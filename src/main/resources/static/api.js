@@ -20,7 +20,7 @@ function request(type, url, data) {
       cache: false,
       success: resolve,
       error: (error) => {
-        if (error.readyState == 4) {
+        if (error.readyState === 4) {
           const json = error.responseJSON;
 
           alert(getErrorMessage(json.code));
