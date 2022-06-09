@@ -1,8 +1,9 @@
-package com.thief.service;
+package com.thief.service.transaction;
 
 import com.thief.entity.Account;
 import com.thief.entity.Transaction;
 import com.thief.repository.TransactionRepository;
+import com.thief.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,10 @@ public class TransactionServiceImpl implements TransactionService {
     public Transaction transfer(Account fromAccount, Account toAccount, Double amount) {
         Transaction transaction = new Transaction();
 
-        // TODO Aggiungere controlli saldo
+        if (fromAccount.getAmount() + amount < 0)
+            throw new InvalidTransactionException(
+                    String.format("Unable to create transaction, account %s has amount less then %s",
+                            fromAccount.getId(), fromAccount.getAmount()), InvalidTransactionException.INVALID_TRANSACTION_CODE);
 
         transaction.setFrom(fromAccount);
         transaction.setTo(toAccount);
@@ -34,9 +38,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Transaction revert(String transactionId) {
-        // TODO Aggiungere controlli saldo
         Transaction targetTransaction = transactionRepository.findById(transactionId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new InvalidTransactionException(
+                        String.format("Cannot find transaction with id %s", transactionId),
+                        InvalidTransactionException.TRANSACTION_NOT_FOUND_CODE));
 
         return transfer(targetTransaction.getTo(), targetTransaction.getFrom(), targetTransaction.getAmount());
     }

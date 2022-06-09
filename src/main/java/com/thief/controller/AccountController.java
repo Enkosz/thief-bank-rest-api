@@ -4,8 +4,8 @@ import com.thief.controller.dto.account.*;
 import com.thief.controller.mapper.AccountMapper;
 import com.thief.entity.Account;
 import com.thief.service.AccountService;
+import com.thief.service.account.AccountNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class AccountController {
     public AccountDto getAccount(@PathVariable String accountId) {
         return accountService.getAccountById(accountId)
                 .map(AccountMapper::fromDomainToAccountDto)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(AccountNotFoundException::new);
     }
 
     @PostMapping
@@ -45,9 +45,10 @@ public class AccountController {
     }
 
     @DeleteMapping("/{accountId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAccount(@PathVariable String accountId) {
-        accountService.deleteAccount(accountId);
+    public AccountCompactDto deleteAccount(@PathVariable String accountId) {
+        Account account = accountService.deleteAccount(accountId);
+
+        return AccountMapper.fromDomainToAccountCompactDto(account);
     }
 
     @PostMapping(value = "/{accountId}", consumes = "application/json")
@@ -74,7 +75,7 @@ public class AccountController {
     @RequestMapping(method = RequestMethod.HEAD, path = "/{accountId}")
     public AccountOwnerDto getAccountInformation(@PathVariable String accountId) {
         Account account = accountService.getAccountById(accountId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(AccountNotFoundException::new);
 
         return AccountMapper.fromDomainToAccountOwnerDto(account);
     }

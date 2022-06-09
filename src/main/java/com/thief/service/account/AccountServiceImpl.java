@@ -1,10 +1,12 @@
-package com.thief.service;
+package com.thief.service.account;
 
 import com.thief.controller.dto.account.AccountDepositDto;
 import com.thief.controller.dto.account.CreateAccountDto;
 import com.thief.entity.Account;
 import com.thief.entity.Transaction;
 import com.thief.repository.AccountRepository;
+import com.thief.service.AccountService;
+import com.thief.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account updateAccount(String accountId, String name, String surname) {
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(AccountNotFoundException::new);
 
         account.setName(name);
         account.setSurname(surname);
@@ -52,7 +54,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account deleteAccount(String accountId) {
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(AccountNotFoundException::new);
 
         accountRepository.delete(account);
         return account;
@@ -60,7 +62,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDepositDto deposit(String accountId, Double amount) {
-        Account account = accountRepository.findById(accountId).orElseThrow(RuntimeException::new);
+        Account account = accountRepository.findById(accountId).orElseThrow(AccountNotFoundException::new);
         Transaction transaction = transactionService.transfer(account, account, amount);
 
         account.setAmount(account.getAmount() + amount);
