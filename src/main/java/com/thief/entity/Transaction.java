@@ -26,10 +26,10 @@ public class Transaction {
     private final Date date = new Date();
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "from_account_id")
     private Account from;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "to_account_id")
     private Account to;
 }

@@ -1,6 +1,5 @@
 package com.thief.service;
 
-import com.thief.controller.api.dto.transaction.TransactionExtendDto;
 import com.thief.entity.Account;
 import com.thief.entity.Transaction;
 

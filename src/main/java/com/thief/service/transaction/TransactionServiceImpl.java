@@ -1,7 +1,5 @@
 package com.thief.service.transaction;
 
-import com.thief.controller.api.dto.transaction.TransactionExtendDto;
-import com.thief.controller.api.mapper.TransactionMapper;
 import com.thief.entity.Account;
 import com.thief.entity.Transaction;
 import com.thief.repository.TransactionRepository;
@@ -35,12 +33,12 @@ public class TransactionServiceImpl implements TransactionService {
                                 fromAccount.getId(), amount),
                         InvalidTransactionException.INVALID_TRANSACTION_CODE);
             fromAccount.setAmount(fromAccount.getAmount() - amount);
-            fromAccount.getTransactions().add(transaction);
+            fromAccount.getTransactionsSent().add(transaction);
         }
 
         if(fromAccount != toAccount || (fromAccount == toAccount && transaction.getAmount() > 0)) {
             toAccount.setAmount(toAccount.getAmount() + amount);
-            //toAccount.getTransactions().add(transaction);
+            toAccount.getTransactionsReceived().add(transaction);
             // con questa si rompe tutto :(
         }
 

@@ -3,8 +3,13 @@ package com.thief.controller.api.mapper;
 import com.thief.controller.api.dto.account.AccountCompactDto;
 import com.thief.controller.api.dto.account.AccountDto;
 import com.thief.controller.api.dto.account.AccountOwnerDto;
+import com.thief.controller.api.dto.transaction.TransactionCompactDto;
+import com.thief.controller.api.dto.transaction.TransactionDto;
+import com.thief.controller.api.dto.transaction.TransactionExtendDto;
 import com.thief.entity.Account;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class AccountMapper {
@@ -29,12 +34,14 @@ public class AccountMapper {
         accountDto.setSurname(accountCompactDto.getSurname());
         accountDto.setAmount(accountCompactDto.getAmount());
 
-        accountDto.getTransactions()
-                .addAll(account.getTransactions()
-                        .stream()
-                        .map(TransactionMapper::fromDomainToTransactionDto)
-                        .collect(Collectors.toList()));
+        List<TransactionDto> transactionDtoList = account.getTransactions()
+                .stream()
+                .map(TransactionMapper::fromDomainToTransactionDto)
+                .sorted(Comparator.comparing(TransactionCompactDto::getDate))
+                .collect(Collectors.toList());
 
+        accountDto.getTransactions()
+                .addAll(transactionDtoList);
         return accountDto;
     }
 
