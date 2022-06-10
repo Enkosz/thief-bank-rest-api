@@ -8,6 +8,7 @@ import com.thief.entity.Transaction;
 import com.thief.service.AccountService;
 import com.thief.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,14 +30,14 @@ public class TransactionController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("/transfer")
+    @PostMapping(value = "/transfer", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public TransactionExtendDto transfer(@RequestBody TransferDto transferDto) {
         Transaction transaction = accountService.transfer(transferDto);
 
         return TransactionMapper.fromDomainToTransactionExtendDto(transaction);
     }
 
-    @PostMapping("/divert")
+    @PostMapping(value = "/divert", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE })
     public TransactionExtendDto revert(@RequestAttribute("id") String idTransaction){
         Transaction transaction = transactionService.revert(idTransaction);
 

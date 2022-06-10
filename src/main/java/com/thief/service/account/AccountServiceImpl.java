@@ -1,6 +1,5 @@
 package com.thief.service.account;
 
-import com.thief.controller.api.dto.transaction.TransactionExtendDto;
 import com.thief.controller.api.dto.transaction.TransferDto;
 import com.thief.controller.api.dto.account.AccountDepositDto;
 import com.thief.controller.api.dto.account.CreateAccountDto;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -36,11 +34,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account createAccount(CreateAccountDto createAccountDto) {
-        if(createAccountDto.getName() == null || createAccountDto.getName().isEmpty())
-            throw new IllegalArgumentException("name is null or empty");
-        if(createAccountDto.getSurname() == null || createAccountDto.getSurname().isEmpty())
-            throw new IllegalArgumentException("surname is null or empty");
-
         Account account = new Account();
 
         account.setName(createAccountDto.getName());
