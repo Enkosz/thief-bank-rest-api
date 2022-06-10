@@ -31,10 +31,13 @@ public class AccountController {
     }
 
     @GetMapping("/{accountId}")
-    public AccountDto getAccount(@PathVariable String accountId) {
-        return accountService.getAccountById(accountId)
-                .map(AccountMapper::fromDomainToAccountDto)
-                .orElseThrow(() -> new AccountNotFoundException(accountId));
+    public ResponseEntity<AccountDto> getAccount(@PathVariable String accountId) {
+        AccountDto account = accountService.getAccountById(accountId)
+                            .map(AccountMapper::fromDomainToAccountDto)
+                            .orElseThrow(() -> new AccountNotFoundException(accountId));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Sistema-Bancario", account.getName() + ";" + account.getSurname());
+        return new ResponseEntity<>(account, headers, HttpStatus.OK);
     }
 
     @PostMapping
