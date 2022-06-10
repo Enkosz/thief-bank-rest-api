@@ -9,6 +9,7 @@ import com.thief.entity.Transaction;
 import com.thief.repository.AccountRepository;
 import com.thief.service.AccountService;
 import com.thief.service.TransactionService;
+import com.thief.service.transaction.InvalidTransactionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account createAccount(CreateAccountDto createAccountDto) {
+        if(createAccountDto.getName() == null || createAccountDto.getName().isEmpty())
+            throw new AccountAttributeNotValid("name");
+        if(createAccountDto.getSurname() == null || createAccountDto.getSurname().isEmpty())
+            throw new AccountAttributeNotValid("surname");
+
         Account account = new Account();
 
         account.setName(createAccountDto.getName());
@@ -44,6 +50,15 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account updateAccount(String accountId, String name, String surname) {
+        // questo forse è inutile
+        if(accountId == null || accountId.isEmpty())
+            throw new AccountAttributeNotValid("accountId");
+
+        if(name == null || name.isEmpty())
+            throw new AccountAttributeNotValid("name");
+        if(surname == null || surname.isEmpty())
+            throw new AccountAttributeNotValid("surname");
+
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountNotFoundException(accountId));
 
@@ -73,6 +88,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Transaction transfer(TransferDto transfer) {
+        if(transfer.getAmount() <= 0)
+            throw new InvalidTransactionException("Invalid transaction with negative amount", "INVALID_TRANSACTION");
         Account fromAccount = accountRepository.findById(transfer.getFromAccountId())
                 .orElseThrow(() -> new AccountNotFoundException(transfer.getFromAccountId()));
         Account toAccount = accountRepository.findById(transfer.getToAccountId())

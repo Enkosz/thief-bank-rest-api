@@ -32,7 +32,7 @@ public class TransactionServiceImpl implements TransactionService {
             if (fromAccount.getAmount() - amount < 0)
                 throw new InvalidTransactionException(
                         String.format("Unable to create transaction, account %s has amount less then %s",
-                                fromAccount.getId(), Math.abs(amount)),
+                                fromAccount.getId(), amount),
                         InvalidTransactionException.INVALID_TRANSACTION_CODE);
             fromAccount.setAmount(fromAccount.getAmount() - amount);
             fromAccount.getTransactions().add(transaction);
@@ -56,7 +56,14 @@ public class TransactionServiceImpl implements TransactionService {
                 .orElseThrow(() -> new InvalidTransactionException(
                         String.format("Cannot find transaction with id %s", transactionId),
                         InvalidTransactionException.TRANSACTION_NOT_FOUND_CODE));
+        try{
+            return transfer(targetTransaction.getTo(), targetTransaction.getFrom(), targetTransaction.getAmount());
+        }
+        catch (InvalidTransactionException e) {
+            throw new InvalidTransactionException(
+                    e.getMessage() + "\n" + String.format("Cannot revert transaction with id %s", transactionId),
+                    InvalidTransactionException.INVALID_TRANSACTION_CODE);
+        }
 
-        return transfer(targetTransaction.getTo(), targetTransaction.getFrom(), targetTransaction.getAmount());
     }
 }
