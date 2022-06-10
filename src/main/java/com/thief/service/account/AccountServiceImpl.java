@@ -37,9 +37,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account createAccount(CreateAccountDto createAccountDto) {
         if(createAccountDto.getName() == null || createAccountDto.getName().isEmpty())
-            throw new AccountAttributeNotValid("name");
+            throw new IllegalArgumentException("name is null or empty");
         if(createAccountDto.getSurname() == null || createAccountDto.getSurname().isEmpty())
-            throw new AccountAttributeNotValid("surname");
+            throw new IllegalArgumentException("surname is null or empty");
 
         Account account = new Account();
 
@@ -53,12 +53,12 @@ public class AccountServiceImpl implements AccountService {
     public Account updateAccount(String accountId, String name, String surname) {
         // questo forse è inutile
         if(accountId == null || accountId.isEmpty())
-            throw new AccountAttributeNotValid("accountId");
+            throw new IllegalArgumentException("accountId is null or empty");
 
         if(name == null || name.isEmpty())
-            throw new AccountAttributeNotValid("name");
+            throw new IllegalArgumentException("name is null or empty");
         if(surname == null || surname.isEmpty())
-            throw new AccountAttributeNotValid("surname");
+            throw new IllegalArgumentException("surname is null or empty");
 
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountNotFoundException(accountId));
@@ -72,7 +72,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account patchAccount(String accountId, String name, String surname) {
         if((name == null || name.isEmpty()) && (surname == null || surname.isEmpty()))
-            throw new AccountAttributeNotValid("patch attributes");
+            throw new IllegalArgumentException("name and surname are null or empty");
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountNotFoundException(accountId));
         if(name == null || name.isEmpty())

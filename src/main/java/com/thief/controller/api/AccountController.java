@@ -4,7 +4,6 @@ import com.thief.controller.api.dto.account.*;
 import com.thief.controller.api.mapper.AccountMapper;
 import com.thief.entity.Account;
 import com.thief.service.AccountService;
-import com.thief.service.account.AccountAttributeNotValid;
 import com.thief.service.account.AccountNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -62,7 +61,7 @@ public class AccountController {
     @PutMapping("/{accountId}")
     public AccountCompactDto updateAccount(@PathVariable String accountId, @RequestBody Map<String, String> values) {
         if(values.size() != 2) {
-            throw new AccountAttributeNotValid(2, values.size());
+            throw new IllegalArgumentException(String.format("expected 2 arguments, but received %o arguments",values.size()));
         }
         Account account = accountService.updateAccount(accountId, values.getOrDefault("name", null),
                                                         values.getOrDefault("surname", null));
@@ -73,7 +72,7 @@ public class AccountController {
     @PatchMapping("/{accountId}")
     public AccountCompactDto patchAccount(@PathVariable String accountId, @RequestBody Map<String, String> values) {
         if(values.size() != 1) {
-            throw new AccountAttributeNotValid(1, values.size());
+            throw new IllegalArgumentException(String.format("expected 1 arguments, but received %o arguments", values.size()));
         }
 
         Account account = accountService.patchAccount(accountId, values.getOrDefault("name", null),
