@@ -51,34 +51,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account updateAccount(String accountId, String name, String surname) {
-        // questo forse è inutile
-        if(accountId == null || accountId.isEmpty())
-            throw new IllegalArgumentException("accountId is null or empty");
-
-        if(name == null || name.isEmpty())
-            throw new IllegalArgumentException("name is null or empty");
-        if(surname == null || surname.isEmpty())
-            throw new IllegalArgumentException("surname is null or empty");
-
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountNotFoundException(accountId));
 
-        account.setName(name);
-        account.setSurname(surname);
+        if(name != null && !name.isEmpty()) account.setName(name);
+        if(surname != null && !surname.isEmpty()) account.setSurname(surname);
 
-        return accountRepository.save(account);
-    }
-
-    @Override
-    public Account patchAccount(String accountId, String name, String surname) {
-        if((name == null || name.isEmpty()) && (surname == null || surname.isEmpty()))
-            throw new IllegalArgumentException("name and surname are null or empty");
-        Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new AccountNotFoundException(accountId));
-        if(name == null || name.isEmpty())
-            account.setSurname(surname);
-        else
-            account.setName(name);
         return accountRepository.save(account);
     }
 

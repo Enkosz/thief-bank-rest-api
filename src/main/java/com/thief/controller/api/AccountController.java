@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -65,24 +66,15 @@ public class AccountController {
     }
 
     @PutMapping("/{accountId}")
-    public AccountCompactDto updateAccount(@PathVariable String accountId, @RequestBody Map<String, String> values) {
-        if(values.size() != 2) {
-            throw new IllegalArgumentException(String.format("expected 2 arguments, but received %o arguments",values.size()));
-        }
-        Account account = accountService.updateAccount(accountId, values.getOrDefault("name", null),
-                                                        values.getOrDefault("surname", null));
+    public AccountCompactDto updateAccount(@PathVariable String accountId, @RequestBody @Valid AccountUpdateDto accountUpdateDto) {
+        Account account = accountService.updateAccount(accountId, accountUpdateDto.getName(), accountUpdateDto.getSurname());
 
         return AccountMapper.fromDomainToAccountCompactDto(account);
     }
 
     @PatchMapping("/{accountId}")
-    public AccountCompactDto patchAccount(@PathVariable String accountId, @RequestBody Map<String, String> values) {
-        if(values.size() != 1) {
-            throw new IllegalArgumentException(String.format("expected 1 arguments, but received %o arguments", values.size()));
-        }
-
-        Account account = accountService.patchAccount(accountId, values.getOrDefault("name", null),
-                                                        values.getOrDefault("surname", null));
+    public AccountCompactDto patchAccount(@PathVariable String accountId, @RequestBody @Valid AccountPatchDto accountPatchDto) {
+        Account account = accountService.updateAccount(accountId, accountPatchDto.getName(), accountPatchDto.getSurname());
 
         return AccountMapper.fromDomainToAccountCompactDto(account);
     }
