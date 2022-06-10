@@ -8,6 +8,7 @@ import com.thief.entity.Account;
 import com.thief.entity.Transaction;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface AccountService {
@@ -19,6 +20,8 @@ public interface AccountService {
     Account createAccount(CreateAccountDto createAccountDto);
 
     Account updateAccount(String accountId, String name, String surname);
+
+    Account patchAccount(String accountId, String name, String surname);
 
     Account deleteAccount(String accountId);
 

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -65,6 +66,19 @@ public class AccountServiceImpl implements AccountService {
         account.setName(name);
         account.setSurname(surname);
 
+        return accountRepository.save(account);
+    }
+
+    @Override
+    public Account patchAccount(String accountId, String name, String surname) {
+        if((name == null || name.isEmpty()) && (surname == null || surname.isEmpty()))
+            throw new AccountAttributeNotValid("patch attributes");
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
+        if(name == null || name.isEmpty())
+            account.setSurname(surname);
+        else
+            account.setName(name);
         return accountRepository.save(account);
     }
 
