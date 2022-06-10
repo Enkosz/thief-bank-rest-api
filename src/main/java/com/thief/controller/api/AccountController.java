@@ -6,6 +6,9 @@ import com.thief.entity.Account;
 import com.thief.service.AccountService;
 import com.thief.service.account.AccountNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -82,10 +85,11 @@ public class AccountController {
     }
 
     @RequestMapping(method = RequestMethod.HEAD, path = "/{accountId}")
-    public AccountOwnerDto getAccountInformation(@PathVariable String accountId) {
+    public ResponseEntity<String> getAccountInformation(@PathVariable String accountId) {
         Account account = accountService.getAccountById(accountId)
                 .orElseThrow(() -> new AccountNotFoundException(accountId));
-
-        return AccountMapper.fromDomainToAccountOwnerDto(account);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Sistema-Bancario", account.getName() + ";" + account.getSurname());
+        return new ResponseEntity<>(headers, HttpStatus.OK);
     }
 }
