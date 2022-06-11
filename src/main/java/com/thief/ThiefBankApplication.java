@@ -6,9 +6,13 @@ import com.thief.service.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.env.Environment;
+
+import java.util.Arrays;
 
 @SpringBootApplication
 public class ThiefBankApplication implements CommandLineRunner {
@@ -18,14 +22,20 @@ public class ThiefBankApplication implements CommandLineRunner {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private Environment environment;
+
     public static void main(String[] args) {
         SpringApplication.run(ThiefBankApplication.class, args);
     }
 
     @Override
     public void run(String... args) throws Exception {
-        createAccount("Pipo", "Duro", 500d);
-        createAccount("Zuppa", "Zupposa", 250d);
+        // Creiamo gli account di test solo quando siamo con H2
+        if(Arrays.asList(environment.getActiveProfiles()).contains("dev")) {
+            createAccount("Pipo", "Duro", 500d);
+            createAccount("Zuppa", "Zupposa", 250d);
+        }
     }
 
     public void createAccount(String name, String surname, Double amount) {

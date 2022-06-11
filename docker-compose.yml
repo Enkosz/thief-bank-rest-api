@@ -7,17 +7,19 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      - postgres-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5433/thief-bank
-      - SPRING_JPA_DATABASE=POSTGRESQL
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/thief-bank
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-  db:
+  postgres-db:
     image: postgres
+    restart: always
     ports:
       - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
@@ -27,3 +29,5 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+volumes:
+  postgres-data:
