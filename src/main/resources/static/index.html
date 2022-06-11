@@ -129,8 +129,8 @@
                                 .add([
                                     transaction.id,
                                     transaction.date,
-                                    `<a href='http://localhost:8080?accountId=${sender}'>${sender}</a>`,
-                                    `<a href='http://localhost:8080?accountId=${receiver}'>${receiver}</a>`,
+                                    `<a href='${getBaseEndpoint()}/?accountId=${sender}'>${sender}</a>`,
+                                    `<a href='${getBaseEndpoint()}?accountId=${receiver}'>${receiver}</a>`,
                                     transaction.amount,
                                 ])
                                 .draw(false);

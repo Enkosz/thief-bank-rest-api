@@ -1,20 +1,24 @@
 function getAccounts() {
-  return request("GET", "/account");
+  return request("GET", "account");
 }
 
 function getAccountById(accountId) {
-  return request("GET", "/account/" + accountId);
+  return request("GET", "account/" + accountId);
 }
 
 function transfer(fromAccountId, toAccountId, amount) {
-  return request("POST", "/transfer", { fromAccountId, toAccountId, amount });
+  return request("POST", "transfer", { fromAccountId, toAccountId, amount });
+}
+
+function getBaseEndpoint() {
+  return window.location.origin
 }
 
 function request(type, url, data) {
   return new Promise((resolve, reject) => {
     $.ajax({
       type: type,
-      url: "http://localhost:8080/api" + url,
+      url: `${getBaseEndpoint()}/api/${url}`,
       contentType: "application/json",
       data: data ? JSON.stringify(data) : "",
       cache: false,
