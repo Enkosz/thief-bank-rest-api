@@ -10,6 +10,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,4 +49,30 @@ class AccountServiceImplTest {
         assertEquals(createdAccount.getSurname(), createAccountDto.getSurname());
         assertEquals(createdAccount.getAmount(), 0);
     }
+
+    public void itShouldUpdateTheAccountWhenIdIsValid () {
+
+        CreateAccountDto createAccountDto = new CreateAccountDto();
+        createAccountDto.setName("Zuppa");
+        createAccountDto.setSurname("Di Culo");
+        accountService.createAccount(createAccountDto);
+        Mockito.verify(accountRepository).save(accountArgumentCaptor.capture());
+        Account oldAccount = accountArgumentCaptor.getValue();
+        String name = "newZuppa";
+        String surname = "newDi Culo";
+        Mockito.when(accountRepository.findById(ArgumentMatchers.any())).thenReturn(Optional.ofNullable(oldAccount));
+
+        //when
+        accountService.updateAccount(oldAccount.getId(), name, surname);
+        Mockito.verify(accountRepository).save(accountArgumentCaptor.capture());
+
+        //then
+        Account updateAccount = accountArgumentCaptor.getValue();
+
+        assertNotNull(updateAccount);
+        assertEquals(updateAccount.getName(), oldAccount.getName());
+        assertEquals(updateAccount.getSurname(), oldAccount.getSurname());
+    }
+
+
 }

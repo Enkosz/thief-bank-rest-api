@@ -64,6 +64,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDepositDto deposit(String accountId, Double amount) {
+        if(amount == 0)
+            throw new InvalidTransactionException("Invalid transaction, amount must be not equal to zero","INVALID_TRANSACTION");
         Account account = accountRepository.findById(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
         Transaction transaction = transactionService.transfer(account, account, amount);
         account.setAmount(account.getAmount() + amount);
@@ -79,7 +81,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Transaction transfer(TransferDto transfer) {
         if(transfer.getAmount() <= 0)
-            throw new InvalidTransactionException("Invalid transaction with nnot positive amount", "INVALID_TRANSACTION");
+            throw new InvalidTransactionException("Invalid transaction with not positive amount", "INVALID_TRANSACTION");
+        if(transfer.getToAccountId().equals(transfer.getFromAccountId()))
+            throw new InvalidTransactionException("Invalid IDs", "INVALID_TRANSACTION");
         Account fromAccount = accountRepository.findById(transfer.getFromAccountId())
                 .orElseThrow(() -> new AccountNotFoundException(transfer.getFromAccountId()));
         Account toAccount = accountRepository.findById(transfer.getToAccountId())
