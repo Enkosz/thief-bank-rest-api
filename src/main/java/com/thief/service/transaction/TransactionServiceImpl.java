@@ -21,25 +21,25 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public Transaction getTransaction(String transactionId) {
+        return transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new InvalidTransactionException(
+                        String.format("Cannot find transaction with id %s", transactionId),
+                        InvalidTransactionException.TRANSACTION_NOT_FOUND_CODE));
+    }
+
+
+    @Override
     public Transaction transfer(Account fromAccount, Account toAccount, Double amount) {
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
         amount = Math.abs(amount);
 
-        if(fromAccount != toAccount || (fromAccount == toAccount && transaction.getAmount() < 0)){
-            if (fromAccount.getAmount() - amount < 0)
-                throw new InvalidTransactionException(
-                        String.format("Unable to create transaction, account %s has amount less then %s",
+        if((fromAccount != toAccount || (fromAccount == toAccount && transaction.getAmount() < 0)) && fromAccount.getAmount() - amount < 0){
+            throw new InvalidTransactionException(
+                    String.format("Unable to create transaction, account %s has amount less then %s",
                                 fromAccount.getId(), amount),
-                        InvalidTransactionException.INVALID_TRANSACTION_CODE);
-            fromAccount.setAmount(fromAccount.getAmount() - amount);
-            fromAccount.getTransactionsSent().add(transaction);
-        }
-
-        if(fromAccount != toAccount || (fromAccount == toAccount && transaction.getAmount() > 0)) {
-            toAccount.setAmount(toAccount.getAmount() + amount);
-            toAccount.getTransactionsReceived().add(transaction);
-            // con questa si rompe tutto :(
+                                InvalidTransactionException.INVALID_TRANSACTION_CODE);
         }
 
         transaction.setFrom(fromAccount);

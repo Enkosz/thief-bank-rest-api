@@ -66,6 +66,11 @@ public class AccountServiceImpl implements AccountService {
     public AccountDepositDto deposit(String accountId, Double amount) {
         Account account = accountRepository.findById(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
         Transaction transaction = transactionService.transfer(account, account, amount);
+        account.setAmount(account.getAmount() + amount);
+        if(amount > 0)
+            account.getTransactionsReceived().add(transaction);
+        else
+            account.getTransactionsSent().add(transaction);
         accountRepository.save(account);
 
         return new AccountDepositDto(account.getAmount(), transaction.getId());
@@ -74,7 +79,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Transaction transfer(TransferDto transfer) {
         if(transfer.getAmount() <= 0)
-            throw new InvalidTransactionException("Invalid transaction with negative amount", "INVALID_TRANSACTION");
+            throw new InvalidTransactionException("Invalid transaction with nnot positive amount", "INVALID_TRANSACTION");
         Account fromAccount = accountRepository.findById(transfer.getFromAccountId())
                 .orElseThrow(() -> new AccountNotFoundException(transfer.getFromAccountId()));
         Account toAccount = accountRepository.findById(transfer.getToAccountId())
@@ -83,8 +88,25 @@ public class AccountServiceImpl implements AccountService {
 
         Transaction transaction = transactionService.transfer(fromAccount, toAccount, amount);
 
+        fromAccount.setAmount(fromAccount.getAmount() - amount);
+        fromAccount.getTransactionsSent().add(transaction);
+        toAccount.setAmount(toAccount.getAmount() + amount);
+        toAccount.getTransactionsReceived().add(transaction);
+
         accountRepository.save(fromAccount);
         accountRepository.save(toAccount);
         return transaction;
+    }
+
+    @Override
+    public Transaction revert(String transferId) {
+        Transaction transaction = transactionService.getTransaction(transferId);
+
+        TransferDto transferDto = new TransferDto();
+        transferDto.setToAccountId(transaction.getFrom().getId());
+        transferDto.setFromAccountId(transaction.getTo().getId());
+        transferDto.setAmount(transaction.getAmount());
+
+        return transfer(transferDto);
     }
 }

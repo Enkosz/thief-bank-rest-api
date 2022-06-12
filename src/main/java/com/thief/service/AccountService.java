@@ -24,4 +24,6 @@ public interface AccountService {
     AccountDepositDto deposit(String accountId, Double amount);
 
     Transaction transfer(TransferDto transfer);
+
+    Transaction revert(String transferId);
 }

@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,17 +31,32 @@ public class TransactionController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping(value = "/transfer", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE })
+    @PostMapping(value = "/transfer", consumes = MediaType.APPLICATION_JSON_VALUE )
     public TransactionExtendDto transfer(@RequestBody TransferDto transferDto) {
         Transaction transaction = accountService.transfer(transferDto);
 
         return TransactionMapper.fromDomainToTransactionExtendDto(transaction);
     }
 
-    @PostMapping(value = "/divert", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE })
-    public TransactionExtendDto revert(@RequestAttribute("id") String idTransaction){
-        Transaction transaction = transactionService.revert(idTransaction);
+    @PostMapping(value = "/transfer", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE )
+    public TransactionExtendDto transferFormEncoded(TransferDto transferDto) {
+        Transaction transaction = accountService.transfer(transferDto);
 
         return TransactionMapper.fromDomainToTransactionExtendDto(transaction);
     }
+
+    @PostMapping(value = "/divert", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public TransactionExtendDto revert(@RequestBody Map<String, String> values){
+        Transaction transaction = accountService.revert(values.get("id"));
+
+        return TransactionMapper.fromDomainToTransactionExtendDto(transaction);
+    }
+
+    @PostMapping(value = "/divert", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public TransactionExtendDto revertFormEncoded(@RequestParam("id") String idTransaction){
+        Transaction transaction = accountService.revert(idTransaction);
+
+        return TransactionMapper.fromDomainToTransactionExtendDto(transaction);
+    }
+
 }
