@@ -1,6 +1,5 @@
 package com.thief.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +30,8 @@ public class Account {
 
     private Double amount = 0d;
 
+    private Boolean active = Boolean.TRUE;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "from")
     private Set<Transaction> transactionsSent = new HashSet<>();
 
@@ -42,5 +43,9 @@ public class Account {
 
         return transactionStream
                 .collect(Collectors.toSet());
+    }
+
+    public void disable() {
+        this.active = false;
     }
 }

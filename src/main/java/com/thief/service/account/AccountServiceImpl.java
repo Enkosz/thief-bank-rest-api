@@ -24,12 +24,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<Account> getAccounts() {
-        return accountRepository.findAll();
+        return accountRepository.findAllByActiveTrue();
     }
 
     @Override
     public Optional<Account> getAccountById(String accountId) {
-        return accountRepository.findById(accountId);
+        return accountRepository.findByIdAndActiveTrue(accountId);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account updateAccount(String accountId, String name, String surname) {
-        Account account = accountRepository.findById(accountId)
+        Account account = accountRepository.findByIdAndActiveTrue(accountId)
                 .orElseThrow(() -> new AccountNotFoundException(accountId));
 
         if(name != null && !name.isEmpty()) account.setName(name);
@@ -55,18 +55,18 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account deleteAccount(String accountId) {
-        Account account = accountRepository.findById(accountId)
+        Account account = accountRepository.findByIdAndActiveTrue(accountId)
                 .orElseThrow(() -> new AccountNotFoundException(accountId));
 
-        accountRepository.delete(account);
-        return account;
+        account.disable();
+        return accountRepository.save(account);
     }
 
     @Override
     public AccountDepositDto deposit(String accountId, Double amount) {
         if(amount == 0)
             throw new InvalidTransactionException("Invalid transaction, amount must be not equal to zero","INVALID_TRANSACTION");
-        Account account = accountRepository.findById(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
+        Account account = accountRepository.findByIdAndActiveTrue(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
         Transaction transaction = transactionService.transfer(account, account, amount);
         account.setAmount(account.getAmount() + amount);
         if(amount > 0)
@@ -84,9 +84,9 @@ public class AccountServiceImpl implements AccountService {
             throw new InvalidTransactionException("Invalid transaction with not positive amount", "INVALID_TRANSACTION");
         if(transfer.getToAccountId().equals(transfer.getFromAccountId()))
             throw new InvalidTransactionException("Invalid IDs", "INVALID_TRANSACTION");
-        Account fromAccount = accountRepository.findById(transfer.getFromAccountId())
+        Account fromAccount = accountRepository.findByIdAndActiveTrue(transfer.getFromAccountId())
                 .orElseThrow(() -> new AccountNotFoundException(transfer.getFromAccountId()));
-        Account toAccount = accountRepository.findById(transfer.getToAccountId())
+        Account toAccount = accountRepository.findByIdAndActiveTrue(transfer.getToAccountId())
                 .orElseThrow(() -> new AccountNotFoundException(transfer.getToAccountId()));
         Double amount = transfer.getAmount();
 

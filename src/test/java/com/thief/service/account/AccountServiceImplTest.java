@@ -50,6 +50,26 @@ class AccountServiceImplTest {
         assertEquals(createdAccount.getAmount(), 0);
     }
 
+    @Test
+    public void itShouldSoftDeleteAnAccountWhenIsDeleted() {
+        // given
+        Account account = new Account();
+        account.setId("123");
+        account.setName("Zuppa");
+        account.setSurname("Di culo");
+
+        Mockito.when(accountRepository.findByIdAndActiveTrue(Mockito.anyString())).thenReturn(Optional.of(account));
+
+        // when
+        accountService.deleteAccount(account.getId());
+        Mockito.verify(accountRepository).save(accountArgumentCaptor.capture());
+
+        // then
+        Account deletedAccount = accountArgumentCaptor.getValue();
+
+        assertFalse(deletedAccount.getActive());
+    }
+
     public void itShouldUpdateTheAccountWhenIdIsValid () {
 
         CreateAccountDto createAccountDto = new CreateAccountDto();
