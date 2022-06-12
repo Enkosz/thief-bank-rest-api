@@ -83,7 +83,7 @@ public class AccountServiceImpl implements AccountService {
         if(transfer.getAmount() <= 0)
             throw new InvalidTransactionException("Invalid transaction with not positive amount", "INVALID_TRANSACTION");
         if(transfer.getToAccountId().equals(transfer.getFromAccountId()))
-            throw new InvalidTransactionException("Invalid IDs", "INVALID_TRANSACTION");
+            throw new InvalidTransactionException("Invalid IDs, they must be different", "INVALID_TRANSACTION");
         Account fromAccount = accountRepository.findByIdAndActiveTrue(transfer.getFromAccountId())
                 .orElseThrow(() -> new AccountNotFoundException(transfer.getFromAccountId()));
         Account toAccount = accountRepository.findByIdAndActiveTrue(transfer.getToAccountId())
