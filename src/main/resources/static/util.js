@@ -9,3 +9,13 @@ function validate(target, rule) {
     target.removeClass("is-valid");
   }
 }
+
+function parseDate(date) {
+  const dateParsed = new Date(date);
+  return dateParsed.getHours() + ":" +
+         dateParsed.getMinutes() + ":" +
+         dateParsed.getSeconds() + "; " +
+         dateParsed.getDate() + "/" +
+         dateParsed.getMonth() + "/" +
+         dateParsed.getFullYear();
+}

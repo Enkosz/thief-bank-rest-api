@@ -108,10 +108,12 @@
             const accountIdEl = $("#accountId");
             const params = new URLSearchParams(window.location.search)
 
-            accountIdEl.focusout(() => validate(accountIdEl, (value) => value.length >= 20))
+            accountIdEl.focusout(() => validate(accountIdEl, (value) => value.length == 20))
 
             $("#findAccountButton").click(() => {
                 // Ripuliamo la tabella ad ogni richiesta
+                if(accountIdEl.hasClass("is-invalid")) return;
+                    
                 accountOwnerTransactionTable.clear().draw();
                 const accountId = accountIdEl.val();
 
@@ -124,14 +126,21 @@
                         account.transactions.forEach((transaction) => {
                             const sender = transaction.fromAccountId === accountId ? "" : transaction.fromAccountId
                             const receiver = transaction.toAccountId === accountId ? "" : transaction.toAccountId
+                            let amount = transaction.amount;
+                            if(!sender && receiver)
+                                amount =  "-" + amount;
+                            if(amount > 0)
+                                amount = "+" + amount;
+                            
+                            const date = parseDate(transaction.date);
 
                             accountOwnerTransactionTable.row
                                 .add([
                                     transaction.id,
-                                    transaction.date,
+                                    date,
                                     `<a href='${getBaseEndpoint()}/?accountId=${sender}'>${sender}</a>`,
                                     `<a href='${getBaseEndpoint()}?accountId=${receiver}'>${receiver}</a>`,
-                                    transaction.amount,
+                                    amount,
                                 ])
                                 .draw(false);
                         });

@@ -78,12 +78,18 @@
             const toAccountIdEl = $("#toAccountId");
             const amountEl = $("#amount")
 
-            fromAccountIdEl.focusout(() => validate(fromAccountIdEl, (value) => value.length >= 20))
-            toAccountIdEl.focusout(() => validate(toAccountIdEl, (value) => value.length >= 20))
-            amountEl.focusout(() => validate(amountEl, (value) => !isNaN(value)))
+            fromAccountIdEl.focusout(() => validate(fromAccountIdEl, (value) => value.length == 20));
+            toAccountIdEl.focusout(() => validate(toAccountIdEl, (value) => value.length == 20));
+            amountEl.focusout(() => validate(amountEl, (value) =>   (!isNaN(value))&&
+                                                                    (!isNaN(parseFloat(value)))&&
+                                                                    parseFloat(value) > 0));
 
             $("#transferButton").click(() => {
                 // Ripuliamo la tabella ad ogni richiesta
+                if (fromAccountIdEl.hasClass("is-invalid") || 
+                    toAccountIdEl.hasClass("is-invalid") || 
+                    amountEl.hasClass("is-invalid")) 
+                    return;
                 const fromAccountId = fromAccountIdEl.val();
                 const toAccountId = toAccountIdEl.val();
                 const amount = amountEl.val();
