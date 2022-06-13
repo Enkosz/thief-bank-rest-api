@@ -253,7 +253,6 @@ class AccountServiceImplTest {
 
         //then
         assertEquals(exception.getCode(), InvalidTransactionException.INVALID_TRANSACTION_CODE);
-        assertEquals(exception.getMessage(), "Invalid transaction, amount must be not equal to zero");
     }
 
     @Test
@@ -315,7 +314,6 @@ class AccountServiceImplTest {
 
         //then
         assertEquals(exception.getCode(), InvalidTransactionException.INVALID_TRANSACTION_CODE);
-        assertEquals(exception.getMessage(), "Invalid transaction with not positive amount");
     }
 
     @Test
@@ -330,7 +328,6 @@ class AccountServiceImplTest {
 
         //then
         assertEquals(exception.getCode(), InvalidTransactionException.INVALID_TRANSACTION_CODE);
-        assertEquals(exception.getMessage(), "Invalid transaction with not positive amount");
     }
 
     @Test
@@ -347,7 +344,6 @@ class AccountServiceImplTest {
 
         //then
         assertEquals(exception.getCode(), InvalidTransactionException.INVALID_TRANSACTION_CODE);
-        assertEquals(exception.getMessage(), "Invalid IDs, they must be different");
     }
 
 
