@@ -1,10 +1,7 @@
 package com.thief.controller.api;
 
 import com.thief.ThiefBankApplication;
-import com.thief.controller.api.dto.account.AccountCompactDto;
-import com.thief.controller.api.dto.account.AccountCreatedDto;
-import com.thief.controller.api.dto.account.AccountDto;
-import com.thief.controller.api.dto.account.CreateAccountDto;
+import com.thief.controller.api.dto.account.*;
 import com.thief.entity.Account;
 import com.thief.service.AccountService;
 import org.junit.jupiter.api.Test;
@@ -25,10 +22,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import javax.validation.ConstraintViolationException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -93,8 +91,6 @@ class AccountControllerIntegrationTest {
         assertEquals(responseAccount.getName(), account.getName());
         assertEquals(responseAccount.getSurname(), account.getSurname());
     }
-
-
 
     @Test
     public void itShouldReturnAccountWhenIdIsCorrect() {
@@ -170,7 +166,7 @@ class AccountControllerIntegrationTest {
 
         //when
         ResponseEntity<AccountCreatedDto> response =
-                this.restTemplate.exchange("http://localhost:" + port + "/api/account/",
+                this.restTemplate.exchange("http://localhost:" + port + "/api/account",
                         HttpMethod.POST,
                         request,
                         AccountCreatedDto.class);
@@ -181,5 +177,225 @@ class AccountControllerIntegrationTest {
         assertEquals(accountCreatedDto.getId(), account.getId());
     }
 
+    @Test
+    public void itShouldReturnErrorWhenCreateAccountWithWrongAttribute() {
+        //given
+        CreateAccountDto createAccountDtoNameIsNull = new CreateAccountDto();
+        createAccountDtoNameIsNull.setName(null);
+        createAccountDtoNameIsNull.setSurname("ue");
+
+        CreateAccountDto createAccountDtoNameIsEmpty = new CreateAccountDto();
+        createAccountDtoNameIsEmpty.setName("");
+        createAccountDtoNameIsEmpty.setSurname("ue");
+
+        CreateAccountDto createAccountDtoSurnameIsNull = new CreateAccountDto();
+        createAccountDtoSurnameIsNull.setName("ue");
+        createAccountDtoSurnameIsNull.setSurname(null);
+
+        CreateAccountDto createAccountDtoSurnameIsEmpty = new CreateAccountDto();
+        createAccountDtoSurnameIsEmpty.setName("ue");
+        createAccountDtoSurnameIsEmpty.setSurname("");
+
+        //when
+        ResponseEntity<String> responseNameEmpty =
+                this.restTemplate.exchange("http://localhost:" + port + "/api/account",
+                        HttpMethod.POST,
+                        new HttpEntity<>(createAccountDtoNameIsEmpty),
+                        String.class);
+        ResponseEntity<String> responseNameNull =
+                this.restTemplate.exchange("http://localhost:" + port + "/api/account",
+                        HttpMethod.POST,
+                        new HttpEntity<>(createAccountDtoNameIsNull),
+                        String.class);
+        ResponseEntity<String> responseSurnameEmpty =
+                this.restTemplate.exchange("http://localhost:" + port + "/api/account",
+                        HttpMethod.POST,
+                        new HttpEntity<>(createAccountDtoSurnameIsEmpty),
+                        String.class);
+        ResponseEntity<String> responseSurnameNull =
+                this.restTemplate.exchange("http://localhost:" + port + "/api/account",
+                        HttpMethod.POST,
+                        new HttpEntity<>(createAccountDtoSurnameIsNull),
+                        String.class);
+
+        //then
+        assertNotNull(responseNameEmpty);
+        assertEquals(responseNameEmpty.getStatusCode(), HttpStatus.BAD_REQUEST);
+        String code = responseNameEmpty.getBody().split("\"")[3];
+        assertEquals(code, "VALIDATION_ERROR");
+
+        assertNotNull(responseNameNull);
+        assertEquals(responseNameNull.getStatusCode(), HttpStatus.BAD_REQUEST);
+        code = responseNameNull.getBody().split("\"")[3];
+        assertEquals(code, "VALIDATION_ERROR");
+
+        assertNotNull(responseSurnameEmpty);
+        assertEquals(responseSurnameEmpty.getStatusCode(), HttpStatus.BAD_REQUEST);
+        code = responseSurnameEmpty.getBody().split("\"")[3];
+        assertEquals(code, "VALIDATION_ERROR");
+
+        assertNotNull(responseSurnameNull);
+        assertEquals(responseSurnameNull.getStatusCode(), HttpStatus.BAD_REQUEST);
+        code = responseSurnameNull.getBody().split("\"")[3];
+        assertEquals(code, "VALIDATION_ERROR");
+    }
+
+    @Test
+    public void itShouldReturnAccountWhenDeleteThatAccount() {
+        //given
+        Account account = new Account();
+        account.setId("ue");
+        account.setName("Fede");
+        account.setSurname("Nero");
+        account.setActive(false);
+
+        Mockito.when(accountService.deleteAccount(ArgumentMatchers.any())).thenReturn(account);
+
+        //when
+        ResponseEntity<AccountCompactDto> response =
+                this.restTemplate.exchange("http://localhost:" + port + "/api/account?id=" + account.getId(),
+                        HttpMethod.DELETE,
+                        null,
+                        AccountCompactDto.class);
+
+        //then
+        assertNotNull(response);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        AccountCompactDto accountCompactDto = response.getBody();
+        assertNotNull(accountCompactDto);
+        assertEquals(account.getId(), accountCompactDto.getId());
+        assertEquals(account.getSurname(), accountCompactDto.getSurname());
+        assertEquals(account.getName(), accountCompactDto.getName());
+        assertEquals(account.getAmount(), accountCompactDto.getAmount());
+    }
+
+    @Test
+    public void itShouldReturnErrorWhenDeleteButIdIsEmpty() {
+        //given
+
+        //when
+        ResponseEntity<String> response =
+                this.restTemplate.exchange("http://localhost:" + port + "/api/account?id=",
+                        HttpMethod.DELETE,
+                        null,
+                        String.class);
+
+        //then
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertNotNull(response.getBody());
+        assertEquals(response.getBody().split("\"")[3], "VALIDATION_ERROR");
+    }
+
+    @Test
+    public void itShouldUpdateAccountWhenUpdate() {
+        //given
+        Account accountPre = new Account();
+        accountPre.setId("id");
+        accountPre.setSurname("ue");
+        accountPre.setName("ueeee");
+
+        String surnameNew = "New ue";
+        String nameNew = "New Ueeee";
+
+        Account accountPost = new Account();
+        accountPost.setId("id");
+        accountPost.setSurname(surnameNew);
+        accountPost.setName(nameNew);
+
+        AccountUpdateDto accountUpdateDto = new AccountUpdateDto();
+        accountUpdateDto.setName(nameNew);
+        accountUpdateDto.setSurname(surnameNew);
+
+        HttpEntity<AccountUpdateDto> request = new HttpEntity<>(accountUpdateDto);
+
+        Mockito.when(accountService
+                    .updateAccount(ArgumentMatchers.any(), ArgumentMatchers.eq(nameNew), ArgumentMatchers.eq(surnameNew)))
+                .thenReturn(accountPost);
+
+        //when
+        ResponseEntity<AccountCompactDto> response =
+                this.restTemplate.exchange("http://localhost:" + port + "/api/account/" + accountPre.getId(),
+                        HttpMethod.PUT,
+                        request,
+                        AccountCompactDto.class);
+
+        //then
+        assertNotNull(response);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        AccountCompactDto accountCompactDto = response.getBody();
+        assertEquals(accountCompactDto.getSurname(), surnameNew);
+        assertEquals(accountCompactDto.getName(), nameNew);
+    }
+
+    @Test
+    public void itShouldReturnErrorWhenNameIsEmpty() {
+        //given
+        AccountUpdateDto accountUpdateDto = new AccountUpdateDto();
+        accountUpdateDto.setName("");
+        accountUpdateDto.setSurname("surname");
+
+        HttpEntity<AccountUpdateDto> request = new HttpEntity<>(accountUpdateDto);
+
+        //when
+        ResponseEntity<String> response =
+                this.restTemplate.exchange("http://localhost:" + port + "/api/account/1234",
+                        HttpMethod.PUT,
+                        request,
+                        String.class);
+
+        //then
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertNotNull(response.getBody());
+        assertEquals(response.getBody().split("\"")[3], "VALIDATION_ERROR");
+    }
+
+    @Test
+    public void itShouldReturnAccountInformationWhenHead() {
+        //given
+        Account account = new Account();
+        account.setId("1234");
+        account.setName("Enkos");
+        account.setSurname("Nero");
+
+        Mockito.when(accountService.getAccountById(ArgumentMatchers.eq("1234"))).thenReturn(Optional.of(account));
+
+        //when
+        ResponseEntity<String> response =
+                this.restTemplate.exchange("http://localhost:" + port + "/api/account/" + account.getId(),
+                        HttpMethod.HEAD,
+                        null,
+                        String.class);
+
+        // then
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(response.getHeaders().get("X-Sistema-Bancario").get(0),
+                account.getName() + ";" + account.getSurname());
+    }
+
+    @Test
+    public void itShouldCreateDepositWhenDeposit() {
+        //given
+        Double amount = 10d;
+
+        Map<String, String> map = new HashMap<>();
+        map.put("amount", amount + "");
+        HttpEntity<Map<String, String>> request = new HttpEntity<>(map);
+
+        AccountDepositDto accountDepositDto = new AccountDepositDto(amount, "idDeposit");
+        Mockito.when(accountService.deposit(ArgumentMatchers.eq("1234"), ArgumentMatchers.eq(amount)))
+                .thenReturn(accountDepositDto);
+
+        //when
+        ResponseEntity<AccountDepositDto> response = this.restTemplate.exchange("http://localhost:" + port + "/api/account/1234",
+                HttpMethod.POST,
+                request,
+                AccountDepositDto.class);
+
+        //then
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        AccountDepositDto accountDepositDtoPost = response.getBody();
+        assertEquals(accountDepositDtoPost.getTransactionId(), "idDeposit");
+        assertEquals(accountDepositDtoPost.getAmount(), amount);
+    }
 
 }
