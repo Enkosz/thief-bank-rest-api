@@ -38,7 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("dev")
 class AccountControllerIntegrationTest {
-
     @LocalServerPort
     private int port;
 
