@@ -24,6 +24,7 @@ public class TransactionMapper {
         transactionDto.setFromAccountId(transaction.getFrom().getId());
         transactionDto.setToAccountId(transaction.getTo().getId());
         transactionDto.setAmount(transaction.getAmount());
+        transactionDto.setType(transaction.getType().name());
 
         return transactionDto;
     }

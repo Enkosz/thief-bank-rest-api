@@ -7,7 +7,9 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,16 +35,24 @@ public class Account {
     private Boolean active = Boolean.TRUE;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "from")
-    private Set<Transaction> transactionsSent = new HashSet<>();
+    private List<Transaction> transactionsSent = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "to")
-    private Set<Transaction> transactionsReceived = new HashSet<>();
+    private List<Transaction> transactionsReceived = new ArrayList<>();
 
-    public Set<Transaction> getTransactions() {
-        Stream<Transaction> transactionStream = Stream.concat(transactionsReceived.stream(), transactionsSent.stream());
+    public List<Transaction> getTransactions() {
+        List<Transaction> transactions = Stream.concat(transactionsSent.stream(), transactionsReceived.stream()).collect(Collectors.toList());
+        List<Transaction> result = new ArrayList<>();
+        Set<Transaction> set = new HashSet<>();
 
-        return transactionStream
-                .collect(Collectors.toSet());
+        for(Transaction transaction : transactions) {
+            if(set.contains(transaction) && transaction.getType() == Transaction.Type.INTERNAL) continue;
+
+            result.add(transaction);
+            set.add(transaction);
+        }
+
+        return result;
     }
 
     public void disable() {

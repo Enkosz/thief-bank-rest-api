@@ -11,7 +11,7 @@ public interface TransactionService {
 
     Transaction getTransaction(String transactionId);
 
-    Transaction transfer(Account fromAccount, Account toAccount, Double amount);
+    Transaction transfer(Account fromAccount, Account toAccount, Double amount, Transaction.Type type);
 
     Transaction revert(String transactionId);
 }

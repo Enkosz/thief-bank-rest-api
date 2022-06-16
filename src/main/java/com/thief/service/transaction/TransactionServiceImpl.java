@@ -30,12 +30,13 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public Transaction transfer(Account fromAccount, Account toAccount, Double amount) {
+    public Transaction transfer(Account fromAccount, Account toAccount, Double amount, Transaction.Type type) {
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
+        transaction.setType(type);
         amount = Math.abs(amount);
 
-        if((fromAccount != toAccount || (fromAccount == toAccount && transaction.getAmount() < 0)) && fromAccount.getAmount() - amount < 0){
+        if((type == Transaction.Type.EXTERNAL || (type == Transaction.Type.INTERNAL && transaction.getAmount() < 0)) && fromAccount.getAmount() - amount < 0) {
             throw new InvalidTransactionException(
                     String.format("Unable to create transaction, account %s has amount less then %s",
                                 fromAccount.getId(), amount),
@@ -54,8 +55,14 @@ public class TransactionServiceImpl implements TransactionService {
                 .orElseThrow(() -> new InvalidTransactionException(
                         String.format("Cannot find transaction with id %s", transactionId),
                         InvalidTransactionException.TRANSACTION_NOT_FOUND_CODE));
-        try{
-            return transfer(targetTransaction.getTo(), targetTransaction.getFrom(), targetTransaction.getAmount());
+
+        if(targetTransaction.getType() == Transaction.Type.INTERNAL)
+            throw new InvalidTransactionException(
+                    String.format("Cannot divert internal transaction %s", transactionId),
+                    InvalidTransactionException.INVALID_TRANSACTION_CODE);
+
+        try {
+            return transfer(targetTransaction.getTo(), targetTransaction.getFrom(), targetTransaction.getAmount(), Transaction.Type.EXTERNAL);
         }
         catch (InvalidTransactionException e) {
             throw new InvalidTransactionException(

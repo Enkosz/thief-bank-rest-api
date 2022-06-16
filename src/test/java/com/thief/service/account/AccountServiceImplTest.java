@@ -202,7 +202,7 @@ class AccountServiceImplTest {
         Double increasedAmount = 100d;
         Transaction transaction = new Transaction();
         Mockito.when(accountRepository.findByIdAndActiveTrue(ArgumentMatchers.any())).thenReturn(Optional.ofNullable(account));
-        Mockito.when(transactionService.transfer(ArgumentMatchers.any(),ArgumentMatchers.any(),ArgumentMatchers.any()))
+        Mockito.when(transactionService.transfer(ArgumentMatchers.any(),ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
                 .thenReturn(transaction);
 
         //when
@@ -227,7 +227,7 @@ class AccountServiceImplTest {
         Double decreasedAmount = -10d;
         Transaction transaction = new Transaction();
         Mockito.when(accountRepository.findByIdAndActiveTrue(ArgumentMatchers.any())).thenReturn(Optional.ofNullable(account));
-        Mockito.when(transactionService.transfer(ArgumentMatchers.any(),ArgumentMatchers.any(),ArgumentMatchers.any()))
+        Mockito.when(transactionService.transfer(ArgumentMatchers.any(),ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
                 .thenReturn(transaction);
 
         //when
@@ -284,7 +284,7 @@ class AccountServiceImplTest {
                     .thenReturn(Optional.ofNullable(accountTo));
         Mockito.when(accountRepository.findByIdAndActiveTrue(ArgumentMatchers.same(accountFrom.getId())))
                     .thenReturn(Optional.ofNullable(accountFrom));
-        Mockito.when(transactionService.transfer(ArgumentMatchers.any(),ArgumentMatchers.any(),ArgumentMatchers.any()))
+        Mockito.when(transactionService.transfer(ArgumentMatchers.any(),ArgumentMatchers.any(),ArgumentMatchers.any(), ArgumentMatchers.any()))
                 .thenReturn(transaction);
 
         //when

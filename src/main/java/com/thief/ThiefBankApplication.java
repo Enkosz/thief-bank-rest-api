@@ -32,7 +32,7 @@ public class ThiefBankApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // Creiamo gli account di test solo quando siamo con H2
-        if(!Arrays.asList(environment.getActiveProfiles()).contains("dev")) {
+        if(Arrays.asList(environment.getActiveProfiles()).contains("dev")) {
             createAccount("Pipo", "Duro", 500d);
             createAccount("Zuppa", "Zupposa", 250d);
         }

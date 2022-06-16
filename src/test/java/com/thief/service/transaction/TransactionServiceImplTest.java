@@ -34,7 +34,7 @@ class TransactionServiceImplTest {
         Double amountDeposit = 10d;
 
         //when
-        transactionService.transfer(account, account, amountDeposit);
+        transactionService.transfer(account, account, amountDeposit, Transaction.Type.INTERNAL);
         Mockito.verify(transactionRepository).save(transactionArgumentCaptor.capture());
 
         //then
@@ -56,7 +56,7 @@ class TransactionServiceImplTest {
         Double amountDeposit = -10d;
 
         //when
-        transactionService.transfer(account, account, amountDeposit);
+        transactionService.transfer(account, account, amountDeposit, Transaction.Type.EXTERNAL);
         Mockito.verify(transactionRepository).save(transactionArgumentCaptor.capture());
 
         //then
@@ -79,7 +79,7 @@ class TransactionServiceImplTest {
 
         //when
         InvalidTransactionException exception = assertThrows(InvalidTransactionException.class,
-                () -> transactionService.transfer(account, account, amountDeposit));
+                () -> transactionService.transfer(account, account, amountDeposit, Transaction.Type.INTERNAL));
 
         //then
         assertEquals(InvalidTransactionException.INVALID_TRANSACTION_CODE, exception.getCode());
@@ -103,7 +103,7 @@ class TransactionServiceImplTest {
         Double amountTransfer = 10d;
 
         //when
-        transactionService.transfer(accountFrom, accountTo, amountTransfer);
+        transactionService.transfer(accountFrom, accountTo, amountTransfer, Transaction.Type.EXTERNAL);
         Mockito.verify(transactionRepository).save(transactionArgumentCaptor.capture());
 
         //then
@@ -133,7 +133,7 @@ class TransactionServiceImplTest {
 
         //when
         InvalidTransactionException exception = assertThrows(InvalidTransactionException.class,
-                () -> transactionService.transfer(accountFrom, accountTo, amountTransfer));
+                () -> transactionService.transfer(accountFrom, accountTo, amountTransfer, Transaction.Type.EXTERNAL));
 
         //then
         assertEquals(InvalidTransactionException.INVALID_TRANSACTION_CODE, exception.getCode());

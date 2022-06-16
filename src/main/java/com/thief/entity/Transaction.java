@@ -32,4 +32,12 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "to_account_id")
     private Account to;
+
+    private Type type = Type.EXTERNAL;
+
+    public enum Type {
+        EXTERNAL,
+        INTERNAL
+    }
+
 }
