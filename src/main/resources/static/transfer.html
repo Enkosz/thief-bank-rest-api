@@ -82,7 +82,7 @@
             toAccountIdEl.focusout(() => validate(toAccountIdEl, (value) => value.length == 20));
             amountEl.focusout(() => validate(amountEl, (value) =>   (!isNaN(value))&&
                                                                     (!isNaN(parseFloat(value)))&&
-                                                                    parseFloat(value) > 0));
+                                                                    parseFloat(value) >= 0));
 
             $("#transferButton").click(() => {
                 // Ripuliamo la tabella ad ogni richiesta

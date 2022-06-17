@@ -10,12 +10,35 @@ function validate(target, rule) {
   }
 }
 
-function parseDate(date) {
-  const dateParsed = new Date(date);
-  return dateParsed.getHours() + ":" +
-         dateParsed.getMinutes() + ":" +
-         dateParsed.getSeconds() + "; " +
-         dateParsed.getDate() + "/" +
-         dateParsed.getMonth() + "/" +
-         dateParsed.getFullYear();
+let amountModifier = -1;
+function formatTransaction(transaction, accountId) {
+  let result = {};
+  if(transaction.type === "INTERNAL") {
+    result.sender = "";
+    result.receiver = "";
+    result.amount = formatAmount(transaction.amount);
+  } else if(transaction.fromAccountId == transaction.toAccountId) { // questo è il caso di transfer verso se stessi
+    result.sender = transaction.fromAccountId;
+    result.receiver = transaction.fromAccountId;
+    result.amount = formatAmount(transaction.amount * amountModifier);
+    amountModifier *= -1; 
+  } else if (transaction.fromAccountId == accountId && transaction.toAccountId != accountId) {
+    result.sender = "";
+    result.receiver = transaction.toAccountId;
+    result.amount = formatAmount(transaction.amount);
+  } else {
+    result.sender = transaction.fromAccountId;
+    result.receiver = "";
+    result.amount = formatAmount(transaction.amount * -1);
+  }
+  return result;
+}
+
+function formatAmount(amount) {
+  if (amount == 0)
+    return "0";
+  if (amount > 0)
+    return "+" + amount;
+  else
+    return "" + amount;
 }

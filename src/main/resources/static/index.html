@@ -122,17 +122,15 @@
                         $("#accountOwnerName").val(account.name);
                         $("#accountOwnerSurname").val(account.surname);
                         $("#accountOwnerAmount").val(account.amount);
+                        let modifier = 1;
 
                         account.transactions.forEach((transaction) => {
-                            const sender = transaction.fromAccountId === accountId ? "" : transaction.fromAccountId
-                            const receiver = transaction.toAccountId === accountId ? "" : transaction.toAccountId
-                            let amount = transaction.amount;
-                            if(!sender && receiver)
-                                amount =  "-" + amount;
-                            if(amount > 0)
-                                amount = "+" + amount;
+                            let format = formatTransaction(transaction, account.id);
+                            const receiver = format.receiver;
+                            const sender = format.sender;
+                            let amount = format.amount;
                             
-                            const date = parseDate(transaction.date);
+                            const date = new Date(transaction.date).toLocaleString();
 
                             accountOwnerTransactionTable.row
                                 .add([
