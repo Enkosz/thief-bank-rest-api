@@ -4,7 +4,7 @@
 - Java 1.8
 - Docker 20.10.7
 - Docker compose 1.21.2
-- Ubuntu 20.04.4 LTS
+- Ubuntu 20.04.4 LTS, CPU Ryzen 1500
 - Porte 8080 e 5432 libere per l'applicativo in Spring e Postgres
 
 ## Fast start
