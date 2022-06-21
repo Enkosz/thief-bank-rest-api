@@ -64,7 +64,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDepositDto deposit(String accountId, Double amount) {
-        Account account = accountRepository.findByIdAndActiveTrue(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
+        Account account = accountRepository.findByIdAndActiveTrue(accountId)
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
         Transaction transaction = transactionService.transfer(account, account, amount, Transaction.Type.INTERNAL);
         account.setAmount(account.getAmount() + amount);
         if(amount > 0)

@@ -42,6 +42,8 @@ function getErrorMessage(code) {
   switch (code) {
     case "ACCOUNT_NOT_FOUND":
       return "Errore, impossibile trovare l'account";
+    case "INVALID_TRANSACTION":
+      return "Errore, impossibile eseguire la transazione, credito insufficiente";
     default:
       return "Si è verificato un errore, riprovare";
   }

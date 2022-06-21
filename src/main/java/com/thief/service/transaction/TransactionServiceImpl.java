@@ -59,7 +59,7 @@ public class TransactionServiceImpl implements TransactionService {
         if(targetTransaction.getType() == Transaction.Type.INTERNAL)
             throw new InvalidTransactionException(
                     String.format("Cannot divert internal transaction %s", transactionId),
-                    InvalidTransactionException.INVALID_TRANSACTION_CODE);
+                    InvalidTransactionException.INVALID_REVERT_CODE);
 
         try {
             return transfer(targetTransaction.getTo(), targetTransaction.getFrom(), targetTransaction.getAmount(), Transaction.Type.EXTERNAL);
