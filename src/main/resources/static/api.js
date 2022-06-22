@@ -42,6 +42,10 @@ function getErrorMessage(code) {
   switch (code) {
     case "ACCOUNT_NOT_FOUND":
       return "Errore, impossibile trovare l'account";
+    case "TRANSACTION_NOT_FOUND":
+      return "Errore, impossibile trovare la transazione";
+    case "INVALID_REVERT":
+      return "Errore, impossibile eseguire il revert della transazione"
     case "INVALID_TRANSACTION":
       return "Errore, impossibile eseguire la transazione, credito insufficiente";
     default:
