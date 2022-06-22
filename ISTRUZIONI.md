@@ -21,4 +21,5 @@ comando `./gradlew dockerCreateDockerFile`, verrà creata la build con le relati
 Una volta eseguita la creazione del dockerfile è sufficiente eseguire il comando `docker-compose up` (sempre nella
 directory principale). \
 Al primo avvio verrà eseguita la build dell'immagine attraverso il dockerfile generato precedentemente.
-L'applicativo verrà dunque esposto sulla porta definita (8080 di default)
+L'applicativo verrà dunque esposto sulla porta definita (8080 di default).
+Per informazioni riguardo gli endpoint e le modalità si guardi il README
