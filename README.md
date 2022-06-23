@@ -1,6 +1,9 @@
 # Thief Bank Api
 Thief-bank è un applicativo che simula una banca dal punto di vista di un amministratore abbiamo scelto d'implementare le funzionalità base indicata all'interno del documento di specifiche. 
 
+## Componenti
+- 872783 Giannino Simone
+- 866147 Biotto Simone
 
 ## Architettura
 Abbiamo scelto di utilizzare Spring Boot come Framework in Java per rappresentare la web application. \
