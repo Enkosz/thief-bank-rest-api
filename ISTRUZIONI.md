@@ -1,7 +1,7 @@
 # Istruzioni
 
 ## Requisiti tecnici 
-- Java 1.8
+- Java 11
 - Docker 20.10.7
 - Docker compose 1.21.2
 - Ubuntu 20.04.4 LTS, CPU Ryzen 1500
